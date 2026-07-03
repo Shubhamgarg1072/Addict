@@ -18,7 +18,8 @@ data class Note(
 
 interface NoteRepository {
     fun observeNotes(): Flow<List<Note>>
-    suspend fun ensureSeeded()
     suspend fun setItemDone(itemId: Long, done: Boolean)
-    suspend fun addNote(title: String)
+    suspend fun addNote(title: String, body: String?)
+    suspend fun addItem(noteId: Long, text: String)
+    suspend fun deleteNote(noteId: Long)
 }

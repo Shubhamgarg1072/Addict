@@ -54,7 +54,9 @@ class GateViewModel(
 
     init {
         viewModelScope.launch {
-            val ms = usageRepository.getToday().getOrNull()?.totalMs ?: 0L
+            // "You've already spent X HERE today" — time in the gated app, not overall.
+            val usage = usageRepository.getToday().getOrNull()
+            val ms = usage?.perApp?.firstOrNull { it.packageName == packageName }?.foregroundMs ?: 0L
             val total = ms / 60_000
             _state.update { it.copy(spent = "${total / 60}h ${total % 60}m") }
         }

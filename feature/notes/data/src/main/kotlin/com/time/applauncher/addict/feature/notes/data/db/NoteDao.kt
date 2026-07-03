@@ -13,18 +13,24 @@ interface NoteDao {
     @Query("SELECT * FROM notes ORDER BY pinned DESC, position ASC")
     fun observeNotesWithItems(): Flow<List<NoteWithItems>>
 
-    @Query("SELECT COUNT(*) FROM notes")
-    suspend fun count(): Int
-
     @Insert
     suspend fun insertNote(note: NoteEntity): Long
 
     @Insert
-    suspend fun insertItems(items: List<ChecklistItemEntity>)
+    suspend fun insertItem(item: ChecklistItemEntity): Long
 
     @Query("UPDATE checklist_items SET done = :done WHERE id = :itemId")
     suspend fun setItemDone(itemId: Long, done: Boolean)
 
+    @Query("DELETE FROM notes WHERE id = :noteId")
+    suspend fun deleteNote(noteId: Long)
+
+    @Query("DELETE FROM checklist_items WHERE noteId = :noteId")
+    suspend fun deleteItemsForNote(noteId: Long)
+
     @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM notes")
     suspend fun nextNotePosition(): Int
+
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM checklist_items WHERE noteId = :noteId")
+    suspend fun nextItemPosition(noteId: Long): Int
 }

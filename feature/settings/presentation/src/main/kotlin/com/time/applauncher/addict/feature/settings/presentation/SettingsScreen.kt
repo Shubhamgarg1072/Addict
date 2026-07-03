@@ -27,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -146,6 +148,15 @@ private fun rowModifier(last: Boolean, onClick: (() -> Unit)?): Modifier {
     var m = Modifier
         .fillMaxWidth()
         .background(StillColors.Surface)
+    if (!last) m = m.drawBehind {
+        val h = 1.dp.toPx()
+        drawLine(
+            color = StillColors.Border,
+            start = Offset(0f, size.height - h),
+            end = Offset(size.width, size.height - h),
+            strokeWidth = h
+        )
+    }
     if (onClick != null) m = m.clickableNoRipple(onClick = onClick)
     return m.padding(horizontal = 18.dp, vertical = 15.dp)
 }

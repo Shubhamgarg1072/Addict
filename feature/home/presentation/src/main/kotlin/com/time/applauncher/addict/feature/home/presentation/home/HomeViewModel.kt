@@ -78,7 +78,14 @@ class HomeViewModel(
     }
 
     init {
-        refreshUsage()
+        // Usage stats can start flowing after init (e.g. permission granted later),
+        // so poll instead of fetching once.
+        viewModelScope.launch {
+            while (true) {
+                usageFlow.value = usageRepository.getToday().getOrNull()
+                delay(30_000)
+            }
+        }
         combine(
             ticker,
             settingsRepository.settings,
@@ -89,12 +96,6 @@ class HomeViewModel(
         }
             .onEach { newState -> _state.value = newState }
             .launchIn(viewModelScope)
-    }
-
-    private fun refreshUsage() {
-        viewModelScope.launch {
-            usageFlow.value = usageRepository.getToday().getOrNull()
-        }
     }
 
     private fun buildState(

@@ -57,13 +57,17 @@ class UsageStatsRepository(
             }
         }
 
-    override suspend fun getWeek(): Result<WeekUsage, DataError.Local> =
+    override suspend fun getWeek(): Result<WeekUsage, DataError.Local> = weekEndingDaysAgo(0)
+
+    override suspend fun getPreviousWeek(): Result<WeekUsage, DataError.Local> = weekEndingDaysAgo(7)
+
+    private suspend fun weekEndingDaysAgo(endOffset: Int): Result<WeekUsage, DataError.Local> =
         withContext(Dispatchers.IO) {
             if (!hasUsageAccess()) return@withContext Result.Error(DataError.Local.PERMISSION_DENIED)
             try {
                 val days = ArrayList<DayUsage>(7)
                 var sum = 0L
-                for (offset in 6 downTo 0) {
+                for (offset in (endOffset + 6) downTo endOffset) {
                     val cal = Calendar.getInstance().apply {
                         add(Calendar.DAY_OF_YEAR, -offset)
                         set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)

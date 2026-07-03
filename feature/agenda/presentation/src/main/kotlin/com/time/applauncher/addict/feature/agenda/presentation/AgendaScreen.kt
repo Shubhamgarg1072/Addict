@@ -1,6 +1,7 @@
 package com.time.applauncher.addict.feature.agenda.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.time.applauncher.addict.core.designsystem.component.MonoLabel
+import com.time.applauncher.addict.core.designsystem.component.StillTextField
 import com.time.applauncher.addict.core.designsystem.component.clickableNoRipple
 import com.time.applauncher.addict.core.designsystem.theme.JetBrainsMono
 import com.time.applauncher.addict.core.designsystem.theme.Manrope
@@ -44,11 +47,15 @@ fun AgendaRoot(
     viewModel: AgendaViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    AgendaScreen(days = state, onBack = onBack)
+    AgendaScreen(state = state, onBack = onBack, onAction = viewModel::onAction)
 }
 
 @Composable
-fun AgendaScreen(days: List<AgendaDay>, onBack: () -> Unit) {
+fun AgendaScreen(
+    state: AgendaState,
+    onBack: () -> Unit,
+    onAction: (AgendaAction) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -60,29 +67,163 @@ fun AgendaScreen(days: List<AgendaDay>, onBack: () -> Unit) {
         ScreenHeader(title = "Agenda", onBack = onBack)
         Column(
             modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
-            days.forEach { group ->
+            if (state.days.isEmpty() && !state.isEditing) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 120.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MonoLabel("NOTHING SCHEDULED", color = StillColors.TextTertiary, letterSpacing = 0.16.em)
+                    Text(
+                        text = "A clear day is a gift.",
+                        modifier = Modifier.padding(top = 10.dp),
+                        style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, color = StillColors.TextTertiary)
+                    )
+                }
+            }
+            state.days.forEach { group ->
                 MonoLabel(
                     text = group.day,
                     modifier = Modifier.padding(top = 6.dp, bottom = 12.dp),
                     color = StillColors.TextTertiary,
                     letterSpacing = 0.16.em
                 )
-                group.events.forEach { event -> AgendaRow(event) }
+                group.events.forEach { event ->
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(StillColors.Border)
+                    )
+                    AgendaRow(event, onDelete = { onAction(AgendaAction.OnDeleteEvent(event.id)) })
+                }
                 Box(Modifier.height(20.dp))
+            }
+        }
+        Box(Modifier.height(12.dp))
+        if (state.isEditing) {
+            EventEditor(state = state, onAction = onAction)
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, StillColors.BorderStrong, RoundedCornerShape(16.dp))
+                    .clickableNoRipple { onAction(AgendaAction.OnAddEvent) }
+                    .padding(14.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "+ New event",
+                    style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = StillColors.TextSecondary)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun AgendaRow(event: AgendaEvent) {
+private fun EventEditor(state: AgendaState, onAction: (AgendaAction) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(StillColors.Surface, RoundedCornerShape(16.dp))
+            .border(1.dp, StillColors.Border, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        MonoLabel("NEW EVENT", color = StillColors.TextTertiary, letterSpacing = 0.16.em)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            AGENDA_DAY_OPTIONS.forEach { day ->
+                val selected = state.draftDay == day
+                MonoLabel(
+                    text = day,
+                    modifier = Modifier
+                        .background(
+                            if (selected) StillColors.Accent else Color.Transparent,
+                            RoundedCornerShape(20.dp)
+                        )
+                        .border(
+                            1.dp,
+                            if (selected) StillColors.Accent else StillColors.BorderStrong,
+                            RoundedCornerShape(20.dp)
+                        )
+                        .clickableNoRipple { onAction(AgendaAction.OnDraftDayChange(day)) }
+                        .padding(horizontal = 14.dp, vertical = 8.dp),
+                    color = if (selected) StillColors.OnAccent else StillColors.TextSecondary,
+                    fontSize = 10.sp,
+                    letterSpacing = 0.12.em
+                )
+            }
+        }
+        StillTextField(
+            value = state.draftTime,
+            onValueChange = { onAction(AgendaAction.OnDraftTimeChange(it)) },
+            placeholder = "Time — e.g. 09:30"
+        )
+        StillTextField(
+            value = state.draftTitle,
+            onValueChange = { onAction(AgendaAction.OnDraftTitleChange(it)) },
+            placeholder = "Title"
+        )
+        StillTextField(
+            value = state.draftMeta,
+            onValueChange = { onAction(AgendaAction.OnDraftMetaChange(it)) },
+            placeholder = "Details — optional"
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .border(1.dp, StillColors.BorderStrong, RoundedCornerShape(24.dp))
+                    .clickableNoRipple { onAction(AgendaAction.OnDismissEditor) }
+                    .padding(vertical = 13.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Cancel",
+                    style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextPrimary)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .background(
+                        if (state.canSave) StillColors.Accent else StillColors.TrackOff,
+                        RoundedCornerShape(24.dp)
+                    )
+                    .clickableNoRipple { onAction(AgendaAction.OnSaveEvent) }
+                    .padding(vertical = 13.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Add",
+                    style = TextStyle(
+                        fontFamily = Manrope,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = if (state.canSave) StillColors.OnAccent else StillColors.TextSecondary
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AgendaRow(event: AgendaEvent, onDelete: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
@@ -90,7 +231,7 @@ private fun AgendaRow(event: AgendaEvent) {
             modifier = Modifier.width(48.dp),
             style = TextStyle(fontFamily = JetBrainsMono, fontSize = 13.sp, color = StillColors.TextSecondary)
         )
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = event.title,
                 style = TextStyle(fontFamily = Manrope, fontSize = 16.sp, fontWeight = FontWeight.Medium, color = StillColors.TextPrimary)
@@ -100,6 +241,14 @@ private fun AgendaRow(event: AgendaEvent) {
                 style = TextStyle(fontFamily = Manrope, fontSize = 13.sp, color = StillColors.TextTertiary)
             )
         }
+        MonoLabel(
+            text = "×",
+            modifier = Modifier
+                .clickableNoRipple(onClick = onDelete)
+                .padding(8.dp),
+            color = StillColors.TextTertiary,
+            fontSize = 16.sp
+        )
     }
 }
 
@@ -132,10 +281,13 @@ internal fun ScreenHeader(title: String, onBack: () -> Unit, actionLabel: String
 private fun AgendaPreview() {
     StillTheme {
         AgendaScreen(
-            days = listOf(
-                AgendaDay("TODAY", listOf(AgendaEvent("09:30", "Design review", "45 min · Room 3")))
+            state = AgendaState(
+                days = listOf(
+                    AgendaDay("TODAY", listOf(AgendaEvent(1, "09:30", "Design review", "45 min · Room 3")))
+                )
             ),
-            onBack = {}
+            onBack = {},
+            onAction = {}
         )
     }
 }
