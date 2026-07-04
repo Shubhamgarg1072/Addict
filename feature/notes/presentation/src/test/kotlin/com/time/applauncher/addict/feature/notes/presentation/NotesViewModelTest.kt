@@ -41,18 +41,22 @@ private class FakeNoteRepository : NoteRepository {
         }
     }
 
-    override suspend fun addNote(title: String, body: String?) {
-        notes.update { it + Note(nextNoteId++, title, pinned = false, body = body, items = emptyList()) }
+    override suspend fun addNote(title: String, body: String?, pinned: Boolean): Long {
+        val id = nextNoteId++
+        notes.update { it + Note(id, title, pinned = pinned, body = body, items = emptyList()) }
+        return id
     }
 
-    override suspend fun addItem(noteId: Long, text: String) {
+    override suspend fun addItem(noteId: Long, text: String): Long {
+        val id = nextItemId++
         notes.update { list ->
             list.map { note ->
                 if (note.id == noteId) {
-                    note.copy(items = note.items + ChecklistItem(nextItemId++, text, false))
+                    note.copy(items = note.items + ChecklistItem(id, text, false))
                 } else note
             }
         }
+        return id
     }
 
     override suspend fun deleteNote(noteId: Long) {

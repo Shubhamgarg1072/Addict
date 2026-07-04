@@ -74,7 +74,7 @@ fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
         Text(
             text = state.clock,
             modifier = Modifier.clickableNoRipple { onAction(HomeAction.OnClickStats) },
-            style = TextStyle(fontSize = 82.sp, fontWeight = FontWeight.Light, color = Color.White, letterSpacing = (-0.04).em)
+            style = TextStyle(fontSize = 82.sp, fontWeight = FontWeight.Light, color = StillColors.TextStrong, letterSpacing = (-0.04).em)
         )
         Text(
             text = state.date,
@@ -107,14 +107,14 @@ fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
                     .padding(top = 9.dp)
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(Color.White.copy(alpha = 0.10f), RoundedCornerShape(2.dp))
+                    .background(StillColors.Ink(0.10f), RoundedCornerShape(2.dp))
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(state.goalFraction)
                         .height(4.dp)
                         .background(
-                            if (state.goalOver) Color.White.copy(alpha = 0.4f) else Color.White,
+                            if (state.goalOver) StillColors.Ink(0.4f) else StillColors.Accent,
                             RoundedCornerShape(2.dp)
                         )
                 )

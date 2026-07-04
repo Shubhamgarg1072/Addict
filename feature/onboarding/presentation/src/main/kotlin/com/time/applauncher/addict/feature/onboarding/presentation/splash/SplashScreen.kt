@@ -64,7 +64,7 @@ fun SplashScreen(onTap: () -> Unit) {
                 modifier = Modifier
                     .size(15.dp)
                     .breathe()
-                    .background(Color.White, CircleShape)
+                    .background(StillColors.Accent, CircleShape)
             )
             Text(
                 text = buildAnnotatedString {
@@ -93,8 +93,8 @@ fun SplashScreen(onTap: () -> Unit) {
     }
 }
 
-private val SpanStyleWhite = androidx.compose.ui.text.SpanStyle(color = Color.White)
-private val SpanStyleDim = androidx.compose.ui.text.SpanStyle(color = Color.White.copy(alpha = 0.35f))
+private val SpanStyleWhite get() = androidx.compose.ui.text.SpanStyle(color = StillColors.TextStrong)
+private val SpanStyleDim get() = androidx.compose.ui.text.SpanStyle(color = StillColors.Ink(0.35f))
 
 @Preview
 @Composable

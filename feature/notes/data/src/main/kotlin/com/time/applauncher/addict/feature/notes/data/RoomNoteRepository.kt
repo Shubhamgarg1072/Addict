@@ -19,13 +19,12 @@ class RoomNoteRepository(
 
     override suspend fun setItemDone(itemId: Long, done: Boolean) = dao.setItemDone(itemId, done)
 
-    override suspend fun addNote(title: String, body: String?) {
+    override suspend fun addNote(title: String, body: String?, pinned: Boolean): Long =
         dao.insertNote(
-            NoteEntity(title = title, pinned = false, body = body, position = dao.nextNotePosition())
+            NoteEntity(title = title, pinned = pinned, body = body, position = dao.nextNotePosition())
         )
-    }
 
-    override suspend fun addItem(noteId: Long, text: String) {
+    override suspend fun addItem(noteId: Long, text: String): Long =
         dao.insertItem(
             ChecklistItemEntity(
                 noteId = noteId,
@@ -34,7 +33,6 @@ class RoomNoteRepository(
                 position = dao.nextItemPosition(noteId)
             )
         )
-    }
 
     override suspend fun deleteNote(noteId: Long) {
         dao.deleteItemsForNote(noteId)

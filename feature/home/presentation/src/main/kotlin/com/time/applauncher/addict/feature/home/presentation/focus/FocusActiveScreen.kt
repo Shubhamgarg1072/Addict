@@ -75,13 +75,13 @@ fun FocusActiveScreen(state: FocusActiveState, onEnd: () -> Unit) {
                     .padding(bottom = 40.dp)
                     .size(16.dp)
                     .breathe(4000)
-                    .background(Color.White, CircleShape)
+                    .background(StillColors.Accent, CircleShape)
             )
             MonoLabel("IN FOCUS", color = StillColors.TextSecondary, fontSize = 11.sp, letterSpacing = 0.24.em)
             Text(
                 text = clock,
                 modifier = Modifier.padding(top = 14.dp, bottom = 6.dp),
-                style = TextStyle(fontSize = 76.sp, fontWeight = FontWeight.Thin, color = Color.White, letterSpacing = (-0.02).em)
+                style = TextStyle(fontSize = 76.sp, fontWeight = FontWeight.Thin, color = StillColors.TextStrong, letterSpacing = (-0.02).em)
             )
             Text("remaining", style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, color = StillColors.TextTertiary))
             Row(modifier = Modifier.padding(top = 52.dp), horizontalArrangement = Arrangement.spacedBy(24.dp)) {

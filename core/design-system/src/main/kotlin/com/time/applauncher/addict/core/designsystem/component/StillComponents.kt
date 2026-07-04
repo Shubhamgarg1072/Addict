@@ -90,7 +90,7 @@ fun StillScreenHeader(
                 fontFamily = Manrope,
                 fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.White,
+                color = StillColors.TextStrong,
                 letterSpacing = (-0.01).em
             )
         )
@@ -109,6 +109,6 @@ fun StillScreenHeader(
 fun HomeIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .background(Color.White.copy(alpha = 0.55f), RoundedCornerShape(3.dp))
+            .background(StillColors.Ink(0.55f), RoundedCornerShape(3.dp))
     )
 }

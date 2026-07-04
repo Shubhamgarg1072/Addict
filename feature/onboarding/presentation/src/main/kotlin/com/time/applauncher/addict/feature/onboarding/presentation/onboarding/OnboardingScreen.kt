@@ -74,7 +74,7 @@ fun OnboardingScreen(step: Int, onNext: () -> Unit) {
             Box(Modifier.height(20.dp))
             Text(
                 text = page.title,
-                style = TextStyle(fontFamily = Manrope, fontSize = 36.sp, lineHeight = 40.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.02).em)
+                style = TextStyle(fontFamily = Manrope, fontSize = 36.sp, lineHeight = 40.sp, fontWeight = FontWeight.Bold, color = StillColors.TextStrong, letterSpacing = (-0.02).em)
             )
             Box(Modifier.height(18.dp))
             Text(
@@ -91,7 +91,7 @@ fun OnboardingScreen(step: Int, onNext: () -> Unit) {
                             .width(width)
                             .height(7.dp)
                             .background(
-                                if (i == step) Color.White else Color.White.copy(alpha = 0.25f),
+                                if (i == step) StillColors.Accent else StillColors.Ink(0.25f),
                                 RoundedCornerShape(4.dp)
                             )
                     )

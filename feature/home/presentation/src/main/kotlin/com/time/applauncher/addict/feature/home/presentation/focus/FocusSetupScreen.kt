@@ -67,7 +67,7 @@ fun FocusSetupScreen(onBack: () -> Unit, onSelect: (Int) -> Unit) {
             fontSize = 11.sp,
             letterSpacing = 0.1.em
         )
-        Text("Focus", style = TextStyle(fontFamily = Manrope, fontSize = 32.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.02).em))
+        Text("Focus", style = TextStyle(fontFamily = Manrope, fontSize = 32.sp, fontWeight = FontWeight.Bold, color = StillColors.TextStrong, letterSpacing = (-0.02).em))
         Text(
             text = "Everything but the essentials disappears. Choose how long to stay present.",
             modifier = Modifier.padding(top = 12.dp),
@@ -85,7 +85,7 @@ fun FocusSetupScreen(onBack: () -> Unit, onSelect: (Int) -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(option.label, style = TextStyle(fontFamily = Manrope, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = Color.White))
+                    Text(option.label, style = TextStyle(fontFamily = Manrope, fontSize = 18.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextStrong))
                     Text(option.sub, style = TextStyle(fontFamily = JetBrainsMono, fontSize = 11.sp, color = StillColors.TextTertiary))
                 }
             }

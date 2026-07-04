@@ -263,7 +263,7 @@ internal fun ScreenHeader(title: String, onBack: () -> Unit, actionLabel: String
     ) {
         Text(
             text = title,
-            style = TextStyle(fontFamily = Manrope, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.01).em)
+            style = TextStyle(fontFamily = Manrope, fontSize = 26.sp, fontWeight = FontWeight.Bold, color = StillColors.TextStrong, letterSpacing = (-0.01).em)
         )
         MonoLabel(
             text = actionLabel,

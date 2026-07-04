@@ -189,12 +189,12 @@ private fun NoteCard(note: Note, state: NotesState, onAction: (NotesAction) -> U
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (note.pinned) {
-                Box(Modifier.size(5.dp).background(Color.White, CircleShape))
+                Box(Modifier.size(5.dp).background(StillColors.Accent, CircleShape))
             }
             Text(
                 text = note.title,
                 modifier = Modifier.weight(1f),
-                style = TextStyle(fontFamily = Manrope, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+                style = TextStyle(fontFamily = Manrope, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextStrong)
             )
             MonoLabel(
                 text = "×",
@@ -265,12 +265,12 @@ private fun ChecklistRow(item: ChecklistItem, onAction: (NotesAction) -> Unit) {
             modifier = Modifier
                 .size(15.dp)
                 .background(
-                    if (item.done) Color.White else Color.Transparent,
+                    if (item.done) StillColors.Accent else Color.Transparent,
                     RoundedCornerShape(4.dp)
                 )
                 .border(
                     1.5.dp,
-                    if (item.done) Color.White else StillColors.TextTertiary,
+                    if (item.done) StillColors.Accent else StillColors.TextTertiary,
                     RoundedCornerShape(4.dp)
                 )
         )
