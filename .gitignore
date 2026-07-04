@@ -1,16 +1,31 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
+# Gradle
+.gradle/
 build/
-/captures
-.externalNativeBuild
-.cxx
+
+# Kotlin
+.kotlin/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+captures/
+.navigation/
+
+# Local configuration
 local.properties
+
+# Native builds
+.externalNativeBuild/
+.cxx/
+
+# Signing
+*.jks
+*.keystore
+
+# Profiling / logs
+*.hprof
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
