@@ -49,6 +49,7 @@ fun NavGraphBuilder.homeGraph(
             onNavigateToDashboard = onNavigateToDashboard,
             onNavigateToAgenda = onNavigateToAgenda,
             onNavigateToGoal = onNavigateToGoal,
+            onNavigateToNotes = onNavigateToNotes,
             onNavigateToSearch = { navController.navigate(SearchRoute) },
             onNavigateToGate = { pkg, label -> navController.navigate(GateRoute(pkg, label)) }
         )
