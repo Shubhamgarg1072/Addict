@@ -21,6 +21,9 @@ data class Challenge(
     val progress: Float
         get() = if (targetDays <= 0) 0f else (streak.toFloat() / targetDays).coerceIn(0f, 1f)
 
+    /** True once the streak has reached the target — the habit is "done" and can be removed. */
+    val isComplete: Boolean get() = targetDays > 0 && streak >= targetDays
+
     companion object {
         const val WEEK_DAYS = 7
         const val LAST_DAY = WEEK_DAYS - 1

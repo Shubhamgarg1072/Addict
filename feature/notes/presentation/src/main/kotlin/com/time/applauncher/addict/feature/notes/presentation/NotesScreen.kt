@@ -358,14 +358,17 @@ private fun ChallengeCard(challenge: ChallengeUi, onAction: (NotesAction) -> Uni
                 )
                 MonoLabel("DAY STREAK", color = StillColors.TextSecondary, fontSize = 9.sp, letterSpacing = 0.14.em, modifier = Modifier.padding(top = 4.dp))
             }
-            MonoLabel(
-                text = "×",
-                modifier = Modifier
-                    .clickableNoRipple { onAction(NotesAction.OnDeleteChallenge(challenge.id)) }
-                    .padding(start = 4.dp),
-                color = StillColors.TextTertiary,
-                fontSize = 16.sp
-            )
+            // Only completed habits can be removed — the streak has reached its target.
+            if (challenge.isComplete) {
+                MonoLabel(
+                    text = "×",
+                    modifier = Modifier
+                        .clickableNoRipple { onAction(NotesAction.OnDeleteChallenge(challenge.id)) }
+                        .padding(start = 4.dp),
+                    color = StillColors.TextTertiary,
+                    fontSize = 16.sp
+                )
+            }
         }
 
         Box(
@@ -489,7 +492,7 @@ private fun NotesPreview() {
                         id = 1, title = "Read 20 pages", goalLabel = "GOAL · 30 DAYS", streak = 7,
                         progress = 0.23f, doneToday = true,
                         week = week.mapIndexed { i, d -> DayCellUi(listOf("S","M","T","W","T","F","S")[i], d, i == 6) },
-                        reminderLabel = "Remind 21:00", hasReminder = true
+                        reminderLabel = "Remind 21:00", hasReminder = true, isComplete = false
                     )
                 )
             ),

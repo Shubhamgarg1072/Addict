@@ -28,7 +28,8 @@ data class ChallengeUi(
     val doneToday: Boolean,
     val week: List<DayCellUi>,
     val reminderLabel: String,
-    val hasReminder: Boolean
+    val hasReminder: Boolean,
+    val isComplete: Boolean
 )
 
 data class NotesState(
@@ -219,7 +220,8 @@ class NotesViewModel(
             DayCellUi(label = DAY_LETTERS[dow], done = done, isToday = i == Challenge.LAST_DAY)
         },
         reminderLabel = reminder?.let { "Remind $it" } ?: "No reminder",
-        hasReminder = reminder != null
+        hasReminder = reminder != null,
+        isComplete = isComplete
     )
 
     private companion object {
