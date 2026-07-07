@@ -55,12 +55,12 @@ fun AboutScreen(onBack: () -> Unit) {
             letterSpacing = 0.1.em
         )
         Column(modifier = Modifier.weight(1f), verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center) {
-            Box(Modifier.size(15.dp).background(Color.White, CircleShape))
+            Box(Modifier.size(15.dp).background(StillColors.Accent, CircleShape))
             Box(Modifier.height(24.dp))
             Text(
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = Color.White)) { append("Still") }
-                    withStyle(SpanStyle(color = Color.White.copy(alpha = 0.35f))) { append(".") }
+                    withStyle(SpanStyle(color = StillColors.TextStrong)) { append("Still") }
+                    withStyle(SpanStyle(color = StillColors.Ink(0.35f))) { append(".") }
                 },
                 style = TextStyle(fontFamily = Manrope, fontSize = 38.sp, fontWeight = FontWeight.Bold, letterSpacing = (-0.02).em)
             )

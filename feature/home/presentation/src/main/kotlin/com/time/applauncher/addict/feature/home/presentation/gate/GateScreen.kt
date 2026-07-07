@@ -77,7 +77,7 @@ private fun GateReasons(state: GateState, onAction: (GateAction) -> Unit) {
         Text(
             text = state.spent,
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-            style = TextStyle(fontSize = 56.sp, fontWeight = FontWeight.Light, color = Color.White, letterSpacing = (-0.03).em)
+            style = TextStyle(fontSize = 56.sp, fontWeight = FontWeight.Light, color = StillColors.TextStrong, letterSpacing = (-0.03).em)
         )
         MonoLabel("HERE TODAY", color = StillColors.TextTertiary, fontSize = 11.sp, letterSpacing = 0.14.em)
         Text(
@@ -91,14 +91,14 @@ private fun GateReasons(state: GateState, onAction: (GateAction) -> Unit) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(if (selected) Color.White.copy(alpha = 0.08f) else StillColors.PanelDark, RoundedCornerShape(14.dp))
+                        .background(if (selected) StillColors.Ink(0.08f) else StillColors.PanelDark, RoundedCornerShape(14.dp))
                         .border(1.dp, if (selected) StillColors.BorderSelected else StillColors.BorderStrong, RoundedCornerShape(14.dp))
                         .clickableNoRipple { onAction(GateAction.OnSelectReason(index)) }
                         .padding(horizontal = 18.dp, vertical = 15.dp)
                 ) {
                     Text(
                         text = reason,
-                        style = TextStyle(fontFamily = Manrope, fontSize = 15.sp, color = if (selected) Color.White else StillColors.TextSecondary)
+                        style = TextStyle(fontFamily = Manrope, fontSize = 15.sp, color = if (selected) StillColors.TextStrong else StillColors.TextSecondary)
                     )
                 }
             }
@@ -116,7 +116,7 @@ private fun Countdown(value: Int, appLabel: String, onCancel: () -> Unit) {
         MonoLabel("OPENING ${appLabel.uppercase()}", color = StillColors.TextSecondary, fontSize = 11.sp, letterSpacing = 0.2.em)
         Text(
             text = value.toString(),
-            style = TextStyle(fontSize = 120.sp, fontWeight = FontWeight.Thin, color = Color.White)
+            style = TextStyle(fontSize = 120.sp, fontWeight = FontWeight.Thin, color = StillColors.TextStrong)
         )
         MonoLabel(
             "CANCEL",
@@ -137,7 +137,7 @@ private fun OutlinedPill(text: String, modifier: Modifier, onClick: () -> Unit) 
             .padding(vertical = 15.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text, style = TextStyle(fontFamily = Manrope, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Color.White))
+        Text(text, style = TextStyle(fontFamily = Manrope, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextStrong))
     }
 }
 
@@ -145,7 +145,7 @@ private fun OutlinedPill(text: String, modifier: Modifier, onClick: () -> Unit) 
 private fun FilledDimPill(text: String, modifier: Modifier, onClick: () -> Unit) {
     Box(
         modifier = modifier
-            .background(Color.White.copy(alpha = 0.10f), RoundedCornerShape(28.dp))
+            .background(StillColors.Ink(0.10f), RoundedCornerShape(28.dp))
             .clickableNoRipple(onClick = onClick)
             .padding(vertical = 15.dp),
         contentAlignment = Alignment.Center

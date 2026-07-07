@@ -69,8 +69,12 @@ class DataStoreSettingsRepository(
             goalMinutes = prefs[Keys.goalMinutes] ?: 150,
             launchDelaySeconds = prefs[Keys.launchDelay] ?: 5,
             onboardingComplete = prefs[Keys.onboardingComplete] ?: false,
-            favorites = prefs[Keys.favorites]?.takeIf { it.isNotEmpty() }?.split("\n")
-                ?: emptyList(),
+            // null = never customized -> defaults; "" = user cleared all -> truly empty
+            favorites = when (val stored = prefs[Keys.favorites]) {
+                null -> DEFAULT_FAVORITE_PACKAGES
+                "" -> emptyList()
+                else -> stored.split("\n")
+            },
             distractingPackages = prefs[Keys.distracting] ?: DEFAULT_DISTRACTING_PACKAGES
         )
     }

@@ -85,13 +85,13 @@ fun GoalScreen(
                     val inset = stroke / 2
                     val arcSize = Size(size.width - stroke, size.height - stroke)
                     drawArc(
-                        color = Color.White.copy(alpha = 0.12f),
+                        color = StillColors.Ink(0.12f),
                         startAngle = -90f, sweepAngle = 360f, useCenter = false,
                         topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
                         size = arcSize, style = Stroke(width = stroke)
                     )
                     drawArc(
-                        color = if (overGoal) Color.White.copy(alpha = 0.5f) else Color.White,
+                        color = if (overGoal) StillColors.Ink(0.5f) else StillColors.Accent,
                         startAngle = -90f, sweepAngle = 360f * pct, useCenter = false,
                         topLeft = androidx.compose.ui.geometry.Offset(inset, inset),
                         size = arcSize, style = Stroke(width = stroke)
@@ -100,7 +100,7 @@ fun GoalScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = minutesToHm(used),
-                        style = TextStyle(fontFamily = Manrope, fontSize = 40.sp, fontWeight = FontWeight.Light, color = Color.White, letterSpacing = (-0.02).em)
+                        style = TextStyle(fontFamily = Manrope, fontSize = 40.sp, fontWeight = FontWeight.Light, color = StillColors.TextStrong, letterSpacing = (-0.02).em)
                     )
                     MonoLabel("OF ${minutesToHm(limit)}", modifier = Modifier.padding(top = 4.dp), color = StillColors.TextSecondary, fontSize = 10.sp, letterSpacing = 0.14.em)
                 }
@@ -130,15 +130,15 @@ fun GoalScreen(
 private fun GoalChip(label: String, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
     Box(
         modifier = modifier
-            .background(if (selected) Color.White else Color.Transparent, RoundedCornerShape(22.dp))
-            .border(1.dp, if (selected) Color.White else StillColors.BorderStrong, RoundedCornerShape(22.dp))
+            .background(if (selected) StillColors.Accent else Color.Transparent, RoundedCornerShape(22.dp))
+            .border(1.dp, if (selected) StillColors.Accent else StillColors.BorderStrong, RoundedCornerShape(22.dp))
             .clickableNoRipple(onClick = onClick)
             .padding(vertical = 13.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = if (selected) Color.Black else StillColors.TextSecondary)
+            style = TextStyle(fontFamily = Manrope, fontSize = 14.sp, fontWeight = FontWeight.SemiBold, color = if (selected) StillColors.OnAccent else StillColors.TextSecondary)
         )
     }
 }

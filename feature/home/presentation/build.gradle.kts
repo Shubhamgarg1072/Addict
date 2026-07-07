@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.time.applauncher.addict.feature.home.presentation"
 }
+
+dependencies {
+    implementation(project(":feature:notes:domain"))
+}

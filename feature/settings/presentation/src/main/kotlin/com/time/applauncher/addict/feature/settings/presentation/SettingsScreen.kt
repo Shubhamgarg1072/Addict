@@ -1,5 +1,7 @@
 package com.time.applauncher.addict.feature.settings.presentation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +29,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,17 +55,32 @@ fun SettingsRoot(
     onBack: () -> Unit,
     onNavigateGoal: () -> Unit,
     onNavigateFocus: () -> Unit,
+    onNavigateFavorites: () -> Unit,
+    onNavigateDistracting: () -> Unit,
+    onNavigatePrivacy: () -> Unit,
     onNavigateAbout: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri -> uri?.let { viewModel.onAction(SettingsAction.OnBackupTarget(it)) } }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> uri?.let { viewModel.onAction(SettingsAction.OnRestoreSource(it)) } }
+
     SettingsScreen(
         state = state,
         onBack = onBack,
         onAction = viewModel::onAction,
         onNavigateGoal = onNavigateGoal,
         onNavigateFocus = onNavigateFocus,
-        onNavigateAbout = onNavigateAbout
+        onNavigateFavorites = onNavigateFavorites,
+        onNavigateDistracting = onNavigateDistracting,
+        onNavigatePrivacy = onNavigatePrivacy,
+        onNavigateAbout = onNavigateAbout,
+        onBackupClick = { backupLauncher.launch("still-backup.json") },
+        onRestoreClick = { restoreLauncher.launch(arrayOf("application/json")) }
     )
 }
 
@@ -72,7 +91,12 @@ fun SettingsScreen(
     onAction: (SettingsAction) -> Unit,
     onNavigateGoal: () -> Unit,
     onNavigateFocus: () -> Unit,
-    onNavigateAbout: () -> Unit
+    onNavigateFavorites: () -> Unit,
+    onNavigateDistracting: () -> Unit,
+    onNavigatePrivacy: () -> Unit,
+    onNavigateAbout: () -> Unit,
+    onBackupClick: () -> Unit = {},
+    onRestoreClick: () -> Unit = {}
 ) {
     val s = state.settings
     Column(
@@ -91,7 +115,7 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             Group("APPEARANCE") {
-                LinkRow("Theme", themeLabel(s.theme))
+                LinkRow("Theme", themeLabel(s.theme), onClick = { onAction(SettingsAction.CycleTheme) })
                 LinkRow("Font", "Manrope")
                 ToggleRow("Colorful app icons", s.colorfulIcons, last = true) {
                     onAction(SettingsAction.ToggleColorfulIcons)
@@ -100,9 +124,14 @@ fun SettingsScreen(
             Group("FOCUS & WELLBEING") {
                 LinkRow("Daily usage goal", goalLabel(s.goalMinutes), onClick = onNavigateGoal)
                 LinkRow("Focus settings", "", onClick = onNavigateFocus)
-                LinkRow("Intentional launch delay", "${s.launchDelaySeconds}s", last = true)
+                LinkRow("Distracting apps", "", onClick = onNavigateDistracting)
+                LinkRow(
+                    "Intentional launch delay", "${s.launchDelaySeconds}s", last = true,
+                    onClick = { onAction(SettingsAction.CycleLaunchDelay) }
+                )
             }
             Group("HOME") {
+                LinkRow("Favorites", "", onClick = onNavigateFavorites)
                 ToggleRow("24-hour clock", s.use24h) { onAction(SettingsAction.Toggle24h) }
                 ToggleRow("Daily quote", s.showQuote, last = true) { onAction(SettingsAction.ToggleQuote) }
             }
@@ -111,9 +140,17 @@ fun SettingsScreen(
                 LinkRow("Text size", "Default", last = true)
             }
             Group("DATA") {
-                LinkRow("Backup", "")
-                LinkRow("Restore", "")
-                LinkRow("Privacy", "", last = true)
+                LinkRow("Backup", "", onClick = onBackupClick)
+                LinkRow("Restore", "", onClick = onRestoreClick)
+                LinkRow("Privacy", "", last = true, onClick = onNavigatePrivacy)
+            }
+            if (state.dataMessage != null) {
+                MonoLabel(
+                    text = state.dataMessage,
+                    modifier = Modifier.padding(top = 10.dp),
+                    color = StillColors.TextSecondary,
+                    letterSpacing = 0.14.em
+                )
             }
             Box(
                 modifier = Modifier
@@ -146,6 +183,15 @@ private fun rowModifier(last: Boolean, onClick: (() -> Unit)?): Modifier {
     var m = Modifier
         .fillMaxWidth()
         .background(StillColors.Surface)
+    if (!last) m = m.drawBehind {
+        val h = 1.dp.toPx()
+        drawLine(
+            color = StillColors.Border,
+            start = Offset(0f, size.height - h),
+            end = Offset(size.width, size.height - h),
+            strokeWidth = h
+        )
+    }
     if (onClick != null) m = m.clickableNoRipple(onClick = onClick)
     return m.padding(horizontal = 18.dp, vertical = 15.dp)
 }
@@ -184,7 +230,7 @@ private fun ToggleSwitch(checked: Boolean) {
             .width(42.dp)
             .height(24.dp)
             .background(
-                if (checked) Color.White else StillColors.TrackOff,
+                if (checked) StillColors.Accent else StillColors.TrackOff,
                 RoundedCornerShape(14.dp)
             )
     ) {
@@ -192,7 +238,7 @@ private fun ToggleSwitch(checked: Boolean) {
             modifier = Modifier
                 .offset(x = knobOffset, y = 3.dp)
                 .size(18.dp)
-                .background(if (checked) Color.Black else Color.White, CircleShape)
+                .background(if (checked) StillColors.OnAccent else StillColors.TextStrong, CircleShape)
         )
     }
 }
@@ -215,7 +261,8 @@ private fun SettingsPreview() {
     StillTheme {
         SettingsScreen(
             state = SettingsState(UserSettings()),
-            onBack = {}, onAction = {}, onNavigateGoal = {}, onNavigateFocus = {}, onNavigateAbout = {}
+            onBack = {}, onAction = {}, onNavigateGoal = {}, onNavigateFocus = {},
+            onNavigateFavorites = {}, onNavigateDistracting = {}, onNavigatePrivacy = {}, onNavigateAbout = {}
         )
     }
 }

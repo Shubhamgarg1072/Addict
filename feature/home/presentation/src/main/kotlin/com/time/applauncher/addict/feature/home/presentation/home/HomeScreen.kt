@@ -1,19 +1,25 @@
 package com.time.applauncher.addict.feature.home.presentation.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +47,7 @@ fun HomeRoot(
     onNavigateToDashboard: () -> Unit,
     onNavigateToAgenda: () -> Unit,
     onNavigateToGoal: () -> Unit,
+    onNavigateToNotes: () -> Unit,
     onNavigateToSearch: () -> Unit,
     onNavigateToGate: (String, String) -> Unit,
     viewModel: HomeViewModel = koinViewModel()
@@ -51,6 +58,7 @@ fun HomeRoot(
             HomeEvent.NavigateToDashboard -> onNavigateToDashboard()
             HomeEvent.NavigateToAgenda -> onNavigateToAgenda()
             HomeEvent.NavigateToGoal -> onNavigateToGoal()
+            HomeEvent.NavigateToStreaks -> onNavigateToNotes()
             HomeEvent.NavigateToSearch -> onNavigateToSearch()
             is HomeEvent.NavigateToGate -> onNavigateToGate(event.packageName, event.label)
         }
@@ -58,6 +66,7 @@ fun HomeRoot(
     HomeScreen(state = state, onAction = viewModel::onAction)
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
     Column(
@@ -72,7 +81,7 @@ fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
         Text(
             text = state.clock,
             modifier = Modifier.clickableNoRipple { onAction(HomeAction.OnClickStats) },
-            style = TextStyle(fontSize = 82.sp, fontWeight = FontWeight.Light, color = Color.White, letterSpacing = (-0.04).em)
+            style = TextStyle(fontSize = 82.sp, fontWeight = FontWeight.Light, color = StillColors.TextStrong, letterSpacing = (-0.04).em)
         )
         Text(
             text = state.date,
@@ -105,26 +114,49 @@ fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
                     .padding(top = 9.dp)
                     .fillMaxWidth()
                     .height(4.dp)
-                    .background(Color.White.copy(alpha = 0.10f), RoundedCornerShape(2.dp))
+                    .background(StillColors.Ink(0.10f), RoundedCornerShape(2.dp))
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(state.goalFraction)
                         .height(4.dp)
                         .background(
-                            if (state.goalOver) Color.White.copy(alpha = 0.4f) else Color.White,
+                            if (state.goalOver) StillColors.Ink(0.4f) else StillColors.Accent,
                             RoundedCornerShape(2.dp)
                         )
                 )
             }
         }
 
-        // Favorites
+        // Streaks — up to three habit chips; taps through to the full Streaks screen
+        if (state.streaks.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 18.dp)
+                    .fillMaxWidth()
+                    .clickableNoRipple { onAction(HomeAction.OnClickStreaks) }
+            ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    MonoLabel("STREAKS", color = StillColors.TextTertiary, letterSpacing = 0.14.em)
+                    MonoLabel(state.streaksDone, color = StillColors.TextSecondary, letterSpacing = 0.14.em)
+                }
+                FlowRow(
+                    modifier = Modifier.padding(top = 11.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    state.streaks.forEach { chip -> StreakChip(chip) }
+                }
+            }
+        }
+
+        // Favorites — scrolls only when the list doesn't fit the small screens
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center
         ) {
             state.favorites.forEach { fav ->
@@ -168,6 +200,31 @@ fun HomeScreen(state: HomeState, onAction: (HomeAction) -> Unit) {
 }
 
 @Composable
+private fun StreakChip(chip: StreakChipUi) {
+    Row(
+        modifier = Modifier
+            .border(1.dp, StillColors.Ink(0.10f), RoundedCornerShape(20.dp))
+            .padding(horizontal = 13.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(9.dp)
+                .then(
+                    if (chip.doneToday) Modifier.background(StillColors.Accent, CircleShape)
+                    else Modifier.border(1.5.dp, StillColors.Ink(0.30f), CircleShape)
+                )
+        )
+        Text(
+            text = chip.title,
+            style = TextStyle(fontSize = 13.sp, color = StillColors.TextPrimary)
+        )
+        MonoLabel(chip.streakStr, color = StillColors.TextTertiary, fontSize = 11.sp, letterSpacing = 0.02.em)
+    }
+}
+
+@Composable
 private fun StatColumn(label: String, value: String) {
     Column {
         MonoLabel(label, color = StillColors.TextTertiary, letterSpacing = 0.14.em)
@@ -195,7 +252,13 @@ private fun HomePreview() {
                     FavoriteUi("a", "Messages", false),
                     FavoriteUi("b", "Camera", false),
                     FavoriteUi("c", "Maps", false)
-                )
+                ),
+                streaks = listOf(
+                    StreakChipUi("Read", "7d", true),
+                    StreakChipUi("No socials", "3d", false),
+                    StreakChipUi("Walk", "12d", true)
+                ),
+                streaksDone = "2 / 4"
             ),
             onAction = {}
         )

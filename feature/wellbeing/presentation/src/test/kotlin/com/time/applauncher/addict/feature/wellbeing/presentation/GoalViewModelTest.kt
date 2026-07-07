@@ -44,6 +44,7 @@ private class FakeUsageRepository(private val totalMs: Long) : UsageRepository {
     override fun hasUsageAccess() = true
     override suspend fun getToday() = Result.Success(DailyUsage(totalMs, 0, emptyList()))
     override suspend fun getWeek() = Result.Success(WeekUsage(emptyList(), 0))
+    override suspend fun getPreviousWeek() = Result.Success(WeekUsage(emptyList(), 0))
 }
 
 class GoalViewModelTest {

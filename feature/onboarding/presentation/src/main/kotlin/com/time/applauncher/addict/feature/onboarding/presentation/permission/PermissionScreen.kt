@@ -82,7 +82,7 @@ fun PermissionScreen(onGrant: () -> Unit, onSkip: () -> Unit) {
             Box(Modifier.height(28.dp))
             Text(
                 text = "Usage access",
-                style = TextStyle(fontFamily = Manrope, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.White, letterSpacing = (-0.01).em)
+                style = TextStyle(fontFamily = Manrope, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = StillColors.TextStrong, letterSpacing = (-0.01).em)
             )
             Box(Modifier.height(16.dp))
             Text(

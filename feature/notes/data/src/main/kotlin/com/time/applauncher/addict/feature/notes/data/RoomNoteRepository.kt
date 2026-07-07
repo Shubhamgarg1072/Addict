@@ -17,46 +17,26 @@ class RoomNoteRepository(
     override fun observeNotes(): Flow<List<Note>> =
         dao.observeNotesWithItems().map { list -> list.map { it.toNote() } }
 
-    override suspend fun ensureSeeded() {
-        if (dao.count() > 0) return
-        seedNote(
-            "Reading list", pinned = true, position = 0, body = null,
-            items = listOf("Deep Work — Newport" to true, "Digital Minimalism" to false, "The Shallows" to false)
-        )
-        seedNote(
-            "This week", pinned = false, position = 1, body = null,
-            items = listOf("Cancel two subscriptions" to true, "Call Dad" to false)
-        )
-        seedNote(
-            "Idea", pinned = false, position = 2,
-            body = "A phone that asks “why?” before it says “yes.”",
-            items = emptyList()
-        )
-    }
-
     override suspend fun setItemDone(itemId: Long, done: Boolean) = dao.setItemDone(itemId, done)
 
-    override suspend fun addNote(title: String) {
+    override suspend fun addNote(title: String, body: String?, pinned: Boolean): Long =
         dao.insertNote(
-            NoteEntity(title = title, pinned = false, body = null, position = dao.nextNotePosition())
+            NoteEntity(title = title, pinned = pinned, body = body, position = dao.nextNotePosition())
         )
-    }
 
-    private suspend fun seedNote(
-        title: String,
-        pinned: Boolean,
-        position: Int,
-        body: String?,
-        items: List<Pair<String, Boolean>>
-    ) {
-        val noteId = dao.insertNote(NoteEntity(title = title, pinned = pinned, body = body, position = position))
-        if (items.isNotEmpty()) {
-            dao.insertItems(
-                items.mapIndexed { index, (text, done) ->
-                    ChecklistItemEntity(noteId = noteId, text = text, done = done, position = index)
-                }
+    override suspend fun addItem(noteId: Long, text: String): Long =
+        dao.insertItem(
+            ChecklistItemEntity(
+                noteId = noteId,
+                text = text,
+                done = false,
+                position = dao.nextItemPosition(noteId)
             )
-        }
+        )
+
+    override suspend fun deleteNote(noteId: Long) {
+        dao.deleteItemsForNote(noteId)
+        dao.deleteNote(noteId)
     }
 }
 

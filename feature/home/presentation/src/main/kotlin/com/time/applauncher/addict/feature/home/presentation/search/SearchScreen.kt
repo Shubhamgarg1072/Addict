@@ -90,7 +90,7 @@ fun SearchScreen(state: SearchState, onAction: (SearchAction) -> Unit) {
             Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = state.query,
-                    style = TextStyle(fontSize = 26.sp, fontWeight = FontWeight.SemiBold, color = Color.White, letterSpacing = (-0.01).em)
+                    style = TextStyle(fontSize = 26.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextStrong, letterSpacing = (-0.01).em)
                 )
                 BlinkingCaret()
             }
@@ -206,21 +206,21 @@ private fun Keyboard(onAction: (SearchAction) -> Unit) {
                 modifier = Modifier
                     .weight(1f)
                     .height(38.dp)
-                    .background(Color.White.copy(alpha = 0.06f), RoundedCornerShape(8.dp))
+                    .background(StillColors.Ink(0.06f), RoundedCornerShape(8.dp))
                     .clickableNoRipple { onAction(SearchAction.OnSpace) },
                 contentAlignment = Alignment.Center
             ) {
-                Text("space", style = TextStyle(fontFamily = Manrope, fontSize = 13.sp, color = Color.White))
+                Text("space", style = TextStyle(fontFamily = Manrope, fontSize = 13.sp, color = StillColors.TextStrong))
             }
             Box(
                 modifier = Modifier
                     .width(64.dp)
                     .height(38.dp)
-                    .background(Color.White.copy(alpha = 0.06f), RoundedCornerShape(8.dp))
+                    .background(StillColors.Ink(0.06f), RoundedCornerShape(8.dp))
                     .clickableNoRipple { onAction(SearchAction.OnBackspace) },
                 contentAlignment = Alignment.Center
             ) {
-                Text("⌫", style = TextStyle(fontFamily = JetBrainsMono, fontSize = 15.sp, color = Color.White))
+                Text("⌫", style = TextStyle(fontFamily = JetBrainsMono, fontSize = 15.sp, color = StillColors.TextStrong))
             }
         }
     }
@@ -231,11 +231,11 @@ private fun Key(label: String, modifier: Modifier, onClick: () -> Unit) {
     Box(
         modifier = modifier
             .height(42.dp)
-            .background(Color.White.copy(alpha = 0.08f), RoundedCornerShape(7.dp))
+            .background(StillColors.Ink(0.08f), RoundedCornerShape(7.dp))
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(label, style = TextStyle(fontFamily = Manrope, fontSize = 17.sp, fontWeight = FontWeight.Medium, color = Color.White))
+        Text(label, style = TextStyle(fontFamily = Manrope, fontSize = 17.sp, fontWeight = FontWeight.Medium, color = StillColors.TextStrong))
     }
 }
 
@@ -262,7 +262,7 @@ private fun BlinkingCaret() {
             .alpha(alpha)
             .width(2.dp)
             .height(26.dp)
-            .background(Color.White)
+            .background(StillColors.TextStrong)
     )
 }
 

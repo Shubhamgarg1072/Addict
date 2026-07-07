@@ -68,7 +68,7 @@ fun DashboardScreen(state: DashboardState, onBack: () -> Unit) {
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
                     text = state.screenTime,
-                    style = TextStyle(fontFamily = Manrope, fontSize = 52.sp, fontWeight = FontWeight.Light, color = Color.White, letterSpacing = (-0.03).em)
+                    style = TextStyle(fontFamily = Manrope, fontSize = 52.sp, fontWeight = FontWeight.Light, color = StillColors.TextStrong, letterSpacing = (-0.03).em)
                 )
                 MonoLabel("TODAY", modifier = Modifier.padding(bottom = 10.dp), color = StillColors.TextTertiary, fontSize = 11.sp)
             }
@@ -110,7 +110,7 @@ private fun WeekBar(bar: WeekBarUi, modifier: Modifier) {
                 .width(20.dp)
                 .fillMaxHeight(bar.fraction.coerceAtLeast(0.03f))
                 .background(
-                    if (bar.isToday) Color.White else Color.White.copy(alpha = 0.22f),
+                    if (bar.isToday) StillColors.Accent else StillColors.Ink(0.22f),
                     RoundedCornerShape(4.dp)
                 )
         )
@@ -138,7 +138,7 @@ private fun StatCard(label: String, value: String, modifier: Modifier) {
         Text(
             text = value,
             modifier = Modifier.padding(top = 8.dp),
-            style = TextStyle(fontFamily = Manrope, fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
+            style = TextStyle(fontFamily = Manrope, fontSize = 22.sp, fontWeight = FontWeight.SemiBold, color = StillColors.TextStrong)
         )
     }
 }
@@ -154,13 +154,13 @@ private fun TopAppRow(app: TopAppUi) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(3.dp)
-                .background(Color.White.copy(alpha = 0.08f), RoundedCornerShape(2.dp))
+                .background(StillColors.Ink(0.08f), RoundedCornerShape(2.dp))
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(app.fraction)
                     .height(3.dp)
-                    .background(Color.White.copy(alpha = 0.55f), RoundedCornerShape(2.dp))
+                    .background(StillColors.Ink(0.55f), RoundedCornerShape(2.dp))
             )
         }
     }
